@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ResQNet Wi-Fi DTN Node</title>
+  <style>
+    body { background: #0b132b; color: #fff; font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    .card { background: #1c2541; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #48cae4; }
+    input, select, button { width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 12px; background: #0b132b; color: #fff; border: 1px solid #48cae4; border-radius: 4px; }
+    button { background: #00b4d8; font-weight: bold; cursor: pointer; }
+    .log { background: #050814; padding: 10px; height: 150px; overflow-y: auto; font-family: monospace; font-size: 13px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>ResQNet Physical Wi-Fi DTN Node</h2>
+    <p>SIMULATION-FREE LOCAL MESH</p>
+    <label>Your Node Name:</label>
+    <input type="text" id="nodeName" value="Node-Phone-1" />
+    <button onclick="register()">Join Local Network</button>
+  </div>
+
+  <div class="card">
+    <h3>Dispatch Emergency Bundle</h3>
+    <label>Destination Node:</label>
+    <input type="text" id="targetNode" placeholder="e.g. Node-Shelter-C" />
+    <label>Payload Message:</label>
+    <input type="text" id="payload" placeholder="Medical supplies needed at sector 4" />
+    <button onclick="sendBundle()">Send Bundle (Store & Forward)</button>
+  </div>
+
+  <div class="card">
+    <h3>Live Message Log & Received Bundles</h3>
+    <div id="log" class="log"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    function logMessage(text) {
+      const box = document.getElementById('log');
+      box.innerHTML += `<div>> ${text}</div>`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function register() {
+      const name = document.getElementById('nodeName').value;
+      socket.emit('register-node', name);
+      logMessage(`Registered on local network as: ${name}`);
+    }
+
+    function sendBundle() {
+      const from = document.getElementById('nodeName').value;
+      const to = document.getElementById('targetNode').value;
+      const payload = document.getElementById('payload').value;
+      socket.emit('send-bundle', { from, to, payload, time: new Date().toLocaleTimeString() });
+      logMessage(`Dispatched bundle to ${to}`);
+    }
+
+    socket.on('receive-bundle', (bundle) => {
+      logMessage(`📦 [BUNDLE RECEIVED!] From ${bundle.from}: "${bundle.payload}" (${bundle.time})`);
+    });
+
+    socket.on('buffer-status', (data) => {
+      logMessage(`⚠️ [Store-Carry-Forward Active] Destination offline. Server holding ${data.bufferedCount} bundle(s) in buffer.`);
+    });
+  </script>
+</body>
+</html>
