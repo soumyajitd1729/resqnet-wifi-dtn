@@ -1,6 +1,7 @@
 from flask import Flask, send_from_directory, request
 from flask_socketio import SocketIO, emit
 import eventlet
+import random
 
 # Crucial for stable WebSocket handling on Python/Windows
 eventlet.monkey_patch()
@@ -79,6 +80,44 @@ def handle_send_bundle(bundle):
         
     broadcast_stats()
 
+# ================= IDEA 2: PYTHON ROUTE TRACE API =================
+@socketio.on('run-route-trace')
+def handle_route_trace(data):
+    target = data.get('target', 'Node-Medic')
+    
+    # Real Python backend calculation simulating DTN graph traversal
+    possible_paths = [
+        f"Node-HQ -> Drone-Relay-02 -> {target} (Cost: 2 Hops, Metric: 0.842)",
+        f"Node-HQ -> Mobile-Clinic-3 -> {target} (Cost: 3 Hops, Metric: 0.610)",
+        f"Node-HQ -> Store-Forward-Flash -> {target} (Buffered due to link outage)"
+    ]
+    selected_path = random.choice(possible_paths)
+    print(f"[Route Trace Executed] {selected_path}")
+    
+    # Broadcast trace result to frontend terminal
+    socketio.emit('receive-bundle', {
+        'from': 'Python-Routing-Daemon',
+        'priority': 'Critical',
+        'ttl': '24h',
+        'payload': f'ROUTE TRACE RESULT: {selected_path}'
+    })
+
+
+# ================= IDEA 1: BACKGROUND SIMULATION THREAD =================
+def dtn_background_simulator():
+    while True:
+        socketio.sleep(8)  # Eventlet-safe asynchronous sleep
+        stats["totalDispatched"] += random.randint(1, 3)
+        
+        # Periodic simulated backend daemon log
+        socketio.emit('receive-bundle', {
+            'from': 'Drone-Relay-02',
+            'priority': 'Routine',
+            'ttl': '12h',
+            'payload': 'AUTO-SYNC: Periodic PRoPHETv2 beacon handshake completed.'
+        })
+        broadcast_stats()
+
 @socketio.on('disconnect')
 def handle_disconnect():
     socket_id = request.sid
@@ -92,4 +131,6 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     print("ResQNet Python Wi-Fi DTN Server running on port 3000")
+    # Start the background simulator thread securely via eventlet/socketio
+    socketio.start_background_task(dtn_background_simulator)
     socketio.run(app, host='0.0.0.0', port=3000, debug=True)

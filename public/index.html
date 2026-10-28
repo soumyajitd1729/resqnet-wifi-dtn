@@ -67,14 +67,14 @@
     <div class="p-4 bg-surface-container/60 border-t border-slate-800/80 text-xs space-y-2">
       <div class="flex justify-between text-slate-400 font-mono text-[11px]">
         <span>CUSTODY BUFFER</span>
-        <span class="text-cyan-400 font-bold text-glow-cyan">68.4%</span>
+        <span id="sidebarBufferRatio" class="text-slate-400 font-mono">0.0%</span>
       </div>
       <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800 p-0.5">
-        <div class="bg-gradient-to-r from-cyan-500 to-primary-container h-full rounded-full glow-cyan" style="width: 68.4%;"></div>
+        <div id="sidebarBufferFill" class="bg-gradient-to-r from-cyan-500 to-primary-container h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
       </div>
       <div class="flex justify-between text-[10px] text-slate-400 font-mono pt-0.5">
-        <span>1.36 GB / 2.00 GB</span>
-        <span class="text-emerald-400 font-bold text-glow-emerald">142 PKTS</span>
+        <span id="sidebarBufferGB">0.00 GB / 2.00 GB</span>
+        <span id="sidebarBufferPkts" class="text-slate-400">0 PKTS</span>
       </div>
     </div>
   </aside>
@@ -99,6 +99,21 @@
     <!-- DASHBOARD BODY CONTAINER -->
     <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
       
+      <!-- ================= LIVE SIMULATION MODE TOGGLE ================= -->
+      <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex items-center justify-between shadow-md">
+        <div class="flex items-center gap-3">
+          <span id="toggleIcon" class="material-symbols-outlined text-slate-500">toggle_off</span>
+          <div>
+            <h3 class="font-bold text-slate-200 text-xs uppercase font-mono">Live Demo Mock Simulation Mode</h3>
+            <p class="text-[11px] text-slate-400">Toggle ON to inject mock telemetry, animate graphs, and simulate network data for presentation.</p>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="simToggle" onchange="toggleSimulationMode(this)" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+        </label>
+      </div>
+
       <!-- ================= 1. OVERVIEW / BUNDLES VIEW ================= -->
       <div id="view-overview" class="space-y-6">
         
@@ -115,7 +130,7 @@
           </div>
           <div class="flex items-center gap-5 font-mono text-xs bg-slate-950/80 p-3.5 rounded-lg border border-slate-800 shadow-inner z-10">
             <div class="px-2 border-r border-slate-800"><p class="text-slate-500 text-[10px]">DTN MESH</p><p class="text-emerald-400 font-bold text-glow-emerald">Ad-Hoc Direct</p></div>
-            <div class="px-2 border-r border-slate-800"><p class="text-slate-500 text-[10px]">SIGNAL RSSI</p><p class="text-cyan-400 font-bold text-glow-cyan">-68 dBm</p></div>
+            <div class="px-2 border-r border-slate-800"><p class="text-slate-500 text-[10px]">SIGNAL RSSI</p><p id="bannerRssi" class="text-slate-400 font-bold">-00 dBm</p></div>
             <div class="px-2 border-r border-slate-800"><p class="text-slate-500 text-[10px]">THRESHOLD</p><p class="text-slate-200 font-bold">≤ 4 Hops</p></div>
             <div class="px-2"><p class="text-slate-500 text-[10px]">PROTOCOL</p><p class="text-purple-400 font-bold">BPv7 (RFC 9171)</p></div>
           </div>
@@ -128,20 +143,20 @@
           <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
             <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
               <span>Active Nodes</span>
-              <span class="material-symbols-outlined text-cyan-400 text-xl text-glow-cyan">hub</span>
+              <span class="material-symbols-outlined text-slate-500 text-xl" id="iconNodes">hub</span>
             </div>
             <div class="my-2 flex items-baseline justify-between">
-              <span id="statNodes" class="text-3xl font-extrabold text-cyan-400 font-mono text-glow-cyan">0</span>
-              <span class="text-[10px] text-cyan-400/80 font-mono bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-800/50">+3 mobile relays</span>
+              <span id="statNodes" class="text-3xl font-extrabold text-slate-400 font-mono">0</span>
+              <span id="badgeNodes" class="text-[10px] text-slate-500 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">Standby</span>
             </div>
             <div class="h-6 w-full my-1">
-              <svg class="w-full h-full text-cyan-400" viewBox="0 0 100 25" preserveAspectRatio="none">
-                <path d="M0,20 Q20,5 40,15 T80,8 T100,12" fill="none" stroke="currentColor" stroke-width="2"/>
+              <svg id="sparkNodes" class="w-full h-full text-slate-600 transition-all duration-500" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,20 Q20,20 40,20 T80,20 T100,20" fill="none" stroke="currentColor" stroke-width="2"/>
               </svg>
             </div>
-            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+            <div class="text-[11px] text-slate-500 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
               <span>Connected peers</span>
-              <span class="text-emerald-400 font-bold text-glow-emerald">Online</span>
+              <span id="statusNodes" class="text-slate-500">Offline</span>
             </div>
           </div>
 
@@ -149,20 +164,20 @@
           <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
             <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
               <span>Buffered Bundles</span>
-              <span class="material-symbols-outlined text-amber-400 text-xl text-glow-amber">inventory_2</span>
+              <span class="material-symbols-outlined text-slate-500 text-xl" id="iconBuffered">inventory_2</span>
             </div>
             <div class="my-2 flex items-baseline justify-between">
-              <span id="statBuffered" class="text-3xl font-extrabold text-amber-400 font-mono text-glow-amber">0</span>
-              <span class="text-[10px] text-amber-400/80 font-mono bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-800/50">Store & Forward</span>
+              <span id="statBuffered" class="text-3xl font-extrabold text-slate-400 font-mono">0</span>
+              <span id="badgeBuffered" class="text-[10px] text-slate-500 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">Queue Empty</span>
             </div>
             <div class="h-6 w-full my-1">
-              <svg class="w-full h-full text-amber-400" viewBox="0 0 100 25" preserveAspectRatio="none">
-                <path d="M0,15 Q30,22 50,10 T80,18 T100,5" fill="none" stroke="currentColor" stroke-width="2"/>
+              <svg id="sparkBuffered" class="w-full h-full text-slate-600 transition-all duration-500" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,20 Q30,20 50,20 T80,20 T100,20" fill="none" stroke="currentColor" stroke-width="2"/>
               </svg>
             </div>
-            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+            <div class="text-[11px] text-slate-500 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
               <span>Custody Queue</span>
-              <span class="text-amber-400 font-bold text-glow-amber">Pending</span>
+              <span id="statusBuffered" class="text-slate-500">Idle</span>
             </div>
           </div>
 
@@ -170,20 +185,20 @@
           <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
             <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
               <span>Total Dispatched</span>
-              <span class="material-symbols-outlined text-indigo-400 text-xl">send</span>
+              <span class="material-symbols-outlined text-slate-500 text-xl">send</span>
             </div>
             <div class="my-2 flex items-baseline justify-between">
-              <span id="statDispatched" class="text-3xl font-extrabold text-indigo-400 font-mono">0</span>
-              <span class="text-[10px] text-indigo-400/80 font-mono bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-800/50">~+312 / hr</span>
+              <span id="statDispatched" class="text-3xl font-extrabold text-slate-400 font-mono">0</span>
+              <span id="badgeDispatched" class="text-[10px] text-slate-500 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">0 / hr</span>
             </div>
             <div class="h-6 w-full my-1">
-              <svg class="w-full h-full text-indigo-400" viewBox="0 0 100 25" preserveAspectRatio="none">
-                <path d="M0,22 Q25,18 45,8 T85,12 T100,2" fill="none" stroke="currentColor" stroke-width="2"/>
+              <svg id="sparkDispatched" class="w-full h-full text-slate-600 transition-all duration-500" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,20 Q25,20 45,20 T85,20 T100,20" fill="none" stroke="currentColor" stroke-width="2"/>
               </svg>
             </div>
-            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+            <div class="text-[11px] text-slate-500 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
               <span>Outbound packets</span>
-              <span class="text-indigo-400 font-bold">BPv7 / TCPCL</span>
+              <span class="text-slate-500 font-bold">BPv7 / TCPCL</span>
             </div>
           </div>
 
@@ -191,19 +206,19 @@
           <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
             <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
               <span>Total Delivered</span>
-              <span class="material-symbols-outlined text-emerald-400 text-xl text-glow-emerald">verified</span>
+              <span class="material-symbols-outlined text-slate-500 text-xl" id="iconDelivered">verified</span>
             </div>
             <div class="my-2 flex items-baseline justify-between">
-              <span id="statDelivered" class="text-3xl font-extrabold text-emerald-400 font-mono text-glow-emerald">0</span>
-              <span class="text-[10px] text-emerald-400 font-mono bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 font-bold text-glow-emerald">ACK CONFIRMED</span>
+              <span id="statDelivered" class="text-3xl font-extrabold text-slate-400 font-mono">0</span>
+              <span id="badgeDelivered" class="text-[10px] text-slate-500 font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800">NO ACK</span>
             </div>
-            <div class="flex items-center gap-2 h-6 my-1 font-mono text-[11px] text-emerald-300">
-              <span class="w-4 h-4 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin inline-block"></span>
-              <span><strong>91.4%</strong> Delivery Ratio</span>
+            <div class="flex items-center gap-2 h-6 my-1 font-mono text-[11px] text-slate-500" id="deliveryRatioBox">
+              <span class="w-4 h-4 rounded-full border-2 border-slate-600 border-t-transparent inline-block"></span>
+              <span><strong>0.0%</strong> Delivery Ratio</span>
             </div>
-            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+            <div class="text-[11px] text-slate-500 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
               <span>Custody Transfers</span>
-              <span class="text-emerald-400 font-bold text-glow-emerald">100% Verified</span>
+              <span id="statusDelivered" class="text-slate-500 font-bold">Awaiting</span>
             </div>
           </div>
 
@@ -237,17 +252,14 @@
           <div class="pt-2">
             <label class="block text-[10px] text-slate-400 mb-1.5 uppercase font-mono">Recently Discovered Mesh Neighbors</label>
             <div class="flex flex-wrap gap-2 text-[11px] font-mono">
-              <button onclick="setTarget('DRONE-RELAY-02')" class="bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-800/60 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> DRONE-RELAY-02 <span class="text-[9px] text-cyan-400 text-glow-cyan">[CONNECTED]</span>
+              <button onclick="setTarget('DRONE-RELAY-02')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-slate-500"></span> DRONE-RELAY-02 <span class="text-[9px] text-slate-400">[DISCOVERED]</span>
               </button>
               <button onclick="setTarget('TRIAGE-BASE-MED')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> TRIAGE-BASE-MED <span class="text-[9px] text-emerald-400">[1-HOP CUSTODY]</span>
+                <span class="w-2 h-2 rounded-full bg-slate-500"></span> TRIAGE-BASE-MED <span class="text-[9px] text-slate-400">[STANDBY]</span>
               </button>
               <button onclick="setTarget('AMBULANCE-04')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span> AMBULANCE-04 <span class="text-[9px] text-amber-400">[IN TRANSIT]</span>
-              </button>
-              <button onclick="setTarget('SEARCH-K9-ALPHA')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-slate-400"></span> SEARCH-K9-ALPHA <span class="text-[9px] text-slate-400">[STORED: 14 BUNDLES]</span>
+                <span class="w-2 h-2 rounded-full bg-slate-500"></span> AMBULANCE-04 <span class="text-[9px] text-slate-400">[STANDBY]</span>
               </button>
             </div>
           </div>
@@ -311,7 +323,7 @@
                 <span class="material-symbols-outlined text-cyan-400 text-glow-cyan">satellite_alt</span>
                 <h2 class="font-bold text-slate-200">Relay Vectors</h2>
               </div>
-              <span class="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded font-bold text-glow-cyan">VECTOR 03 ACTIVE</span>
+              <span id="vectorHeaderBadge" class="text-[10px] font-mono text-slate-500 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">VECTOR STANDBY</span>
             </div>
             
             <p class="text-xs text-slate-400 leading-relaxed font-sans">
@@ -323,11 +335,11 @@
               <!-- Vector Item 1: UAV Sky-Swarm -->
               <div class="bg-slate-950/90 p-3 rounded-lg border border-slate-800 space-y-1.5 shadow-inner">
                 <div class="flex justify-between items-center text-slate-200">
-                  <span class="font-bold text-cyan-300 text-glow-cyan">UAV SKY-SWARM-49</span>
-                  <span class="text-cyan-400 font-bold text-glow-cyan">98% Contact in 4m</span>
+                  <span id="vec1Name" class="font-bold text-slate-400">UAV SKY-SWARM-49</span>
+                  <span id="vec1Val" class="text-slate-500">0% Contact</span>
                 </div>
                 <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
-                  <div class="bg-cyan-400 h-full rounded-full glow-cyan" style="width: 98%;"></div>
+                  <div id="vec1Bar" class="bg-slate-700 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
                 </div>
                 <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
                   <span>LoRa 915MHz Direct</span>
@@ -338,11 +350,11 @@
               <!-- Vector Item 2: Mobile Clinic #3 -->
               <div class="bg-slate-950/90 p-3 rounded-lg border border-slate-800 space-y-1.5 shadow-inner">
                 <div class="flex justify-between items-center text-slate-200">
-                  <span class="font-bold text-cyan-300 text-glow-cyan">MOBILE CLINIC #3</span>
-                  <span class="text-cyan-300 font-bold text-glow-cyan">64% Contact in 18m</span>
+                  <span id="vec2Name" class="font-bold text-slate-400">MOBILE CLINIC #3</span>
+                  <span id="vec2Val" class="text-slate-500">0% Contact</span>
                 </div>
                 <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
-                  <div class="bg-cyan-400 h-full rounded-full glow-cyan" style="width: 64%;"></div>
+                  <div id="vec2Bar" class="bg-slate-700 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
                 </div>
                 <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
                   <span>Wi-Fi Ad-Hoc 802.11p</span>
@@ -353,11 +365,11 @@
               <!-- Vector Item 3: Ambulance Convoy B -->
               <div class="bg-slate-950/90 p-3 rounded-lg border border-slate-800 space-y-1.5 shadow-inner">
                 <div class="flex justify-between items-center text-slate-200">
-                  <span class="font-bold text-slate-300">AMBULANCE CONVOY B</span>
-                  <span class="text-amber-400 font-bold text-glow-amber">32% Intermittent</span>
+                  <span id="vec3Name" class="font-bold text-slate-400">AMBULANCE CONVOY B</span>
+                  <span id="vec3Val" class="text-slate-500">0% Contact</span>
                 </div>
                 <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
-                  <div class="bg-amber-400 h-full rounded-full glow-amber" style="width: 32%;"></div>
+                  <div id="vec3Bar" class="bg-slate-700 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
                 </div>
                 <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
                   <span>BLE 5.2 Store-Forward</span>
@@ -368,12 +380,26 @@
               <!-- Epidemic Quotas Footer -->
               <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800/80 text-[11px]">
                 <span class="text-slate-400 font-bold uppercase">EPIDEMIC ROUTING:</span>
-                <span class="text-cyan-400 font-bold text-glow-cyan">LIMITED (QUOTAS: 3)</span>
+                <span id="epidemicStatus" class="text-slate-500 font-bold">DISABLED</span>
               </div>
 
             </div>
           </div>
 
+        </div>
+
+        <!-- PYTHON BACKEND ROUTE TRACE TRIGGER -->
+        <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl shadow-md flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-cyan-400 text-glow-cyan">analytics</span>
+            <div>
+              <h3 class="font-bold text-slate-200 text-xs uppercase font-mono">Python Backend Daemon Test</h3>
+              <p class="text-[11px] text-slate-400">Trigger real-time Python graph traversal & routing calculation via eventlet backend.</p>
+            </div>
+          </div>
+          <button onclick="triggerRouteTrace()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded-lg transition duration-200 glow-cyan text-xs font-mono flex items-center gap-1.5 shrink-0">
+            <span class="material-symbols-outlined text-sm">memory</span> Run Python Route Trace
+          </button>
         </div>
 
         <!-- TERMINAL FEED LOG -->
@@ -400,10 +426,10 @@
             <h2 class="font-bold text-slate-200 text-lg">Dynamic Mesh Topology Map (RFC 9171)</h2>
           </div>
           <p class="text-xs text-slate-400">Real-time adjacency graph visualizing opportunistic contact links between mobile incident nodes.</p>
-          <div class="bg-slate-950 border border-slate-800 p-8 rounded-lg h-72 flex flex-col items-center justify-center font-mono text-cyan-400 space-y-3 shadow-inner">
-            <span class="material-symbols-outlined text-5xl animate-pulse text-cyan-400 text-glow-cyan">radar</span>
-            <div class="text-base font-bold text-glow-cyan">[MESH GRAPH ACTIVE] Node-HQ ↔ Drone-Relay-02 ↔ Node-Medic</div>
-            <p class="text-xs text-slate-500">Max Hop Limit: ≤ 4 Hops • Protocol: BPv7 TCPCL</p>
+          <div id="topoMapBox" class="bg-slate-950 border border-slate-800 p-6 rounded-lg h-96 flex flex-col items-center justify-center font-mono text-slate-500 space-y-3 shadow-inner relative overflow-hidden">
+            <span class="material-symbols-outlined text-5xl text-slate-600">radar</span>
+            <div id="topoMapText" class="text-base font-bold">[MESH GRAPH OFFLINE] Toggle Live Demo Mode to Initialize Adjacency Graph</div>
+            <p id="topoMapSub" class="text-xs text-slate-600">Max Hop Limit: ≤ 4 Hops • Protocol: BPv7 TCPCL</p>
           </div>
         </section>
       </div>
@@ -416,9 +442,9 @@
             <h2 class="font-bold text-slate-200 text-lg">Store-Carry-Forward Bundle Cache</h2>
           </div>
           <p class="text-xs text-slate-400">Inspecting non-volatile flash storage buffer for offline nodes and custody transfer records.</p>
-          <div class="bg-slate-950 border border-slate-800 p-6 rounded-lg font-mono text-xs text-amber-400 space-y-2 shadow-inner">
-            <div>> Storage Allocation: 1.36 GB / 2.00 GB (68.4% Capacity)</div>
-            <div>> Active Custody Transfers: <span class="text-glow-amber font-bold">142 Packets Pending</span></div>
+          <div id="cacheBox" class="bg-slate-950 border border-slate-800 p-6 rounded-lg font-mono text-xs text-slate-500 space-y-4 shadow-inner">
+            <div>> Storage Allocation: 0.00 GB / 2.00 GB (0.0% Capacity)</div>
+            <div>> Active Custody Transfers: <span class="font-bold">0 Packets Pending</span></div>
             <div>> TTL Policy: 12-hour Tactical Expiration Window</div>
           </div>
         </section>
@@ -433,17 +459,17 @@
           </div>
           <p class="text-xs text-slate-400">Multi-band tactical interface management for resilient disaster relief communication.</p>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-            <div class="bg-slate-950 p-4 rounded-lg border border-cyan-500 space-y-2 shadow-md">
-              <div class="text-cyan-400 font-bold text-glow-cyan">Wi-Fi Ad-Hoc (5GHz)</div>
-              <div class="text-[11px] text-slate-400">Bandwidth: 54 Mbps<br/>Status: <span class="text-emerald-400 text-glow-emerald">ACTIVE / LINKED</span></div>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-2 shadow-md">
+              <div class="text-slate-300 font-bold">Wi-Fi Ad-Hoc (5GHz)</div>
+              <div class="text-[11px] text-slate-500">Bandwidth: 54 Mbps<br/>Status: STANDBY</div>
             </div>
             <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-2">
               <div class="text-slate-300 font-bold">LoRa (915MHz)</div>
-              <div class="text-[11px] text-slate-500">Bandwidth: 128 Kbps<br/>Status: STANDBY (Long Range)</div>
+              <div class="text-[11px] text-slate-500">Bandwidth: 128 Kbps<br/>Status: STANDBY</div>
             </div>
             <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-2">
               <div class="text-slate-300 font-bold">Bluetooth LE 5.2</div>
-              <div class="text-[11px] text-slate-500">Bandwidth: 320 Kbps<br/>Status: STANDBY (Opportunistic)</div>
+              <div class="text-[11px] text-slate-500">Bandwidth: 320 Kbps<br/>Status: STANDBY</div>
             </div>
           </div>
         </section>
@@ -476,6 +502,270 @@
   </script>
 
   <script>
+    let isSimulationActive = false;
+
+    function toggleSimulationMode(checkbox) {
+      isSimulationActive = checkbox.checked;
+      const icon = document.getElementById('toggleIcon');
+      
+      if (isSimulationActive) {
+        icon.innerText = 'toggle_on';
+        icon.className = 'material-symbols-outlined text-cyan-400 text-glow-cyan animate-pulse';
+        logMessage("[DEMO] Live Simulation Mode ENGAGED. Injecting mock telemetry, live topology graphs, and bundle cache records.");
+      } else {
+        icon.innerText = 'toggle_off';
+        icon.className = 'material-symbols-outlined text-slate-500';
+        logMessage("[DEMO] Live Simulation Mode DISENGAGED. Resetting to static state.");
+        
+        // Reset Overview metrics
+        document.getElementById('bannerRssi').innerText = '-00 dBm';
+        document.getElementById('bannerRssi').className = 'text-slate-400 font-bold';
+        
+        document.getElementById('statNodes').innerText = '0';
+        document.getElementById('statNodes').className = 'text-3xl font-extrabold text-slate-400 font-mono';
+        document.getElementById('badgeNodes').innerText = 'Standby';
+        document.getElementById('badgeNodes').className = 'text-[10px] text-slate-500 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800';
+        document.getElementById('iconNodes').className = 'material-symbols-outlined text-slate-500 text-xl';
+        document.getElementById('sparkNodes').innerHTML = '<path d="M0,20 Q20,20 40,20 T80,20 T100,20" fill="none" stroke="currentColor" stroke-width="2"/>';
+        document.getElementById('sparkNodes').className = 'w-full h-full text-slate-600 transition-all duration-500';
+        document.getElementById('statusNodes').innerText = 'Offline';
+        document.getElementById('statusNodes').className = 'text-slate-500';
+
+        document.getElementById('statBuffered').innerText = '0';
+        document.getElementById('statBuffered').className = 'text-3xl font-extrabold text-slate-400 font-mono';
+        document.getElementById('badgeBuffered').innerText = 'Queue Empty';
+        document.getElementById('badgeBuffered').className = 'text-[10px] text-slate-500 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800';
+        document.getElementById('iconBuffered').className = 'material-symbols-outlined text-slate-500 text-xl';
+        document.getElementById('sparkBuffered').innerHTML = '<path d="M0,20 Q30,20 50,20 T80,20 T100,20" fill="none" stroke="currentColor" stroke-width="2"/>';
+        document.getElementById('sparkBuffered').className = 'w-full h-full text-slate-600 transition-all duration-500';
+        document.getElementById('statusBuffered').innerText = 'Idle';
+        document.getElementById('statusBuffered').className = 'text-slate-500';
+
+        document.getElementById('statDispatched').innerText = '0';
+        document.getElementById('statDispatched').className = 'text-3xl font-extrabold text-slate-400 font-mono';
+        document.getElementById('badgeDispatched').innerText = '0 / hr';
+        document.getElementById('badgeDispatched').className = 'text-[10px] text-slate-500 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800';
+        document.getElementById('sparkDispatched').innerHTML = '<path d="M0,20 Q25,20 45,20 T85,20 T100,20" fill="none" stroke="currentColor" stroke-width="2"/>';
+        document.getElementById('sparkDispatched').className = 'w-full h-full text-slate-600 transition-all duration-500';
+
+        document.getElementById('statDelivered').innerText = '0';
+        document.getElementById('statDelivered').className = 'text-3xl font-extrabold text-slate-400 font-mono';
+        document.getElementById('badgeDelivered').innerText = 'NO ACK';
+        document.getElementById('badgeDelivered').className = 'text-[10px] text-slate-500 font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800';
+        document.getElementById('iconDelivered').className = 'material-symbols-outlined text-slate-500 text-xl';
+        document.getElementById('deliveryRatioBox').innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-slate-600 border-t-transparent inline-block"></span><span><strong>0.0%</strong> Delivery Ratio</span>';
+        document.getElementById('deliveryRatioBox').className = 'flex items-center gap-2 h-6 my-1 font-mono text-[11px] text-slate-500';
+        document.getElementById('statusDelivered').innerText = 'Awaiting';
+        document.getElementById('statusDelivered').className = 'text-slate-500 font-bold';
+
+        // Reset Sidebar Buffer Meter
+        document.getElementById('sidebarBufferRatio').innerText = '0.0%';
+        document.getElementById('sidebarBufferRatio').className = 'text-slate-400 font-mono';
+        document.getElementById('sidebarBufferFill').style.width = '0%';
+        document.getElementById('sidebarBufferGB').innerText = '0.00 GB / 2.00 GB';
+        document.getElementById('sidebarBufferPkts').innerText = '0 PKTS';
+        document.getElementById('sidebarBufferPkts').className = 'text-slate-400';
+
+        // Reset Relay Vectors
+        document.getElementById('vectorHeaderBadge').innerText = 'VECTOR STANDBY';
+        document.getElementById('vectorHeaderBadge').className = 'text-[10px] font-mono text-slate-500 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded';
+        
+        document.getElementById('vec1Name').className = 'font-bold text-slate-400';
+        document.getElementById('vec1Val').innerText = '0% Contact';
+        document.getElementById('vec1Val').className = 'text-slate-500';
+        document.getElementById('vec1Bar').style.width = '0%';
+        document.getElementById('vec1Bar').className = 'bg-slate-700 h-full rounded-full transition-all duration-500';
+
+        document.getElementById('vec2Name').className = 'font-bold text-slate-400';
+        document.getElementById('vec2Val').innerText = '0% Contact';
+        document.getElementById('vec2Val').className = 'text-slate-500';
+        document.getElementById('vec2Bar').style.width = '0%';
+        document.getElementById('vec2Bar').className = 'bg-slate-700 h-full rounded-full transition-all duration-500';
+
+        document.getElementById('vec3Name').className = 'font-bold text-slate-400';
+        document.getElementById('vec3Val').innerText = '0% Contact';
+        document.getElementById('vec3Val').className = 'text-slate-500';
+        document.getElementById('vec3Bar').style.width = '0%';
+        document.getElementById('vec3Bar').className = 'bg-slate-700 h-full rounded-full transition-all duration-500';
+
+        document.getElementById('epidemicStatus').innerText = 'DISABLED';
+        document.getElementById('epidemicStatus').className = 'text-slate-500 font-bold';
+
+        // Reset Topology Map View
+        document.getElementById('topoMapBox').className = 'bg-slate-950 border border-slate-800 p-6 rounded-lg h-96 flex flex-col items-center justify-center font-mono text-slate-500 space-y-3 shadow-inner relative overflow-hidden';
+        document.getElementById('topoMapBox').innerHTML = `
+          <span class="material-symbols-outlined text-5xl text-slate-600">radar</span>
+          <div id="topoMapText" class="text-base font-bold">[MESH GRAPH OFFLINE] Toggle Live Demo Mode to Initialize Adjacency Graph</div>
+          <p id="topoMapSub" class="text-xs text-slate-600">Max Hop Limit: ≤ 4 Hops • Protocol: BPv7 TCPCL</p>
+        `;
+
+        // Reset Bundle Cache View
+        document.getElementById('cacheBox').className = 'bg-slate-950 border border-slate-800 p-6 rounded-lg font-mono text-xs text-slate-500 space-y-4 shadow-inner';
+        document.getElementById('cacheBox').innerHTML = `
+          <div>> Storage Allocation: 0.00 GB / 2.00 GB (0.0% Capacity)</div>
+          <div>> Active Custody Transfers: <span class="font-bold">0 Packets Pending</span></div>
+          <div>> TTL Policy: 12-hour Tactical Expiration Window</div>
+        `;
+      }
+    }
+
+    // Periodic simulation injector loop
+    setInterval(() => {
+      if (!isSimulationActive) return;
+
+      // Random fluctuating mock values when simulation is ON
+      const mockNodes = 42;
+      const mockBuffered = 1894 + Math.floor(Math.random() * 15);
+      const mockDispatched = 14208 + Math.floor(Math.random() * 25);
+      const mockDelivered = 12985 + Math.floor(Math.random() * 10);
+
+      document.getElementById('bannerRssi').innerText = '-68 dBm';
+      document.getElementById('bannerRssi').className = 'text-cyan-400 font-bold text-glow-cyan';
+
+      document.getElementById('statNodes').innerText = mockNodes;
+      document.getElementById('statNodes').className = 'text-3xl font-extrabold text-cyan-400 font-mono text-glow-cyan';
+      document.getElementById('badgeNodes').innerText = '+3 mobile relays';
+      document.getElementById('badgeNodes').className = 'text-[10px] text-cyan-400/80 font-mono bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-800/50';
+      document.getElementById('iconNodes').className = 'material-symbols-outlined text-cyan-400 text-xl text-glow-cyan';
+      document.getElementById('sparkNodes').innerHTML = '<path d="M0,20 Q20,5 40,15 T80,8 T100,12" fill="none" stroke="currentColor" stroke-width="2"/>';
+      document.getElementById('sparkNodes').className = 'w-full h-full text-cyan-400 transition-all duration-500';
+      document.getElementById('statusNodes').innerText = 'Online';
+      document.getElementById('statusNodes').className = 'text-emerald-400 font-bold text-glow-emerald';
+
+      document.getElementById('statBuffered').innerText = mockBuffered;
+      document.getElementById('statBuffered').className = 'text-3xl font-extrabold text-amber-400 font-mono text-glow-amber';
+      document.getElementById('badgeBuffered').innerText = 'Store & Forward';
+      document.getElementById('badgeBuffered').className = 'text-[10px] text-amber-400/80 font-mono bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-800/50';
+      document.getElementById('iconBuffered').className = 'material-symbols-outlined text-amber-400 text-xl text-glow-amber';
+      document.getElementById('sparkBuffered').innerHTML = '<path d="M0,15 Q30,22 50,10 T80,18 T100,5" fill="none" stroke="currentColor" stroke-width="2"/>';
+      document.getElementById('sparkBuffered').className = 'w-full h-full text-amber-400 transition-all duration-500';
+      document.getElementById('statusBuffered').innerText = 'Pending';
+      document.getElementById('statusBuffered').className = 'text-amber-400 font-bold text-glow-amber';
+
+      document.getElementById('statDispatched').innerText = mockDispatched;
+      document.getElementById('statDispatched').className = 'text-3xl font-extrabold text-indigo-400 font-mono';
+      document.getElementById('badgeDispatched').innerText = '~+312 / hr';
+      document.getElementById('badgeDispatched').className = 'text-[10px] text-indigo-400/80 font-mono bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-800/50';
+      document.getElementById('sparkDispatched').innerHTML = '<path d="M0,22 Q25,18 45,8 T85,12 T100,2" fill="none" stroke="currentColor" stroke-width="2"/>';
+      document.getElementById('sparkDispatched').className = 'w-full h-full text-indigo-400 transition-all duration-500';
+
+      document.getElementById('statDelivered').innerText = mockDelivered;
+      document.getElementById('statDelivered').className = 'text-3xl font-extrabold text-emerald-400 font-mono text-glow-emerald';
+      document.getElementById('badgeDelivered').innerText = 'ACK CONFIRMED';
+      document.getElementById('badgeDelivered').className = 'text-[10px] text-emerald-400 font-mono bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 font-bold text-glow-emerald';
+      document.getElementById('iconDelivered').className = 'material-symbols-outlined text-emerald-400 text-xl text-glow-emerald';
+      document.getElementById('deliveryRatioBox').innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin inline-block"></span><span><strong>91.4%</strong> Delivery Ratio</span>';
+      document.getElementById('deliveryRatioBox').className = 'flex items-center gap-2 h-6 my-1 font-mono text-[11px] text-emerald-300';
+      document.getElementById('statusDelivered').innerText = '100% Verified';
+      document.getElementById('statusDelivered').className = 'text-emerald-400 font-bold text-glow-emerald';
+
+      // Sidebar Buffer Meter
+      document.getElementById('sidebarBufferRatio').innerText = '68.4%';
+      document.getElementById('sidebarBufferRatio').className = 'text-cyan-400 font-bold text-glow-cyan font-mono';
+      document.getElementById('sidebarBufferFill').style.width = '68.4%';
+      document.getElementById('sidebarBufferGB').innerText = '1.36 GB / 2.00 GB';
+      document.getElementById('sidebarBufferPkts').innerText = '142 PKTS';
+      document.getElementById('sidebarBufferPkts').className = 'text-emerald-400 font-bold text-glow-emerald';
+
+      // Relay Vectors
+      document.getElementById('vectorHeaderBadge').innerText = 'VECTOR 03 ACTIVE';
+      document.getElementById('vectorHeaderBadge').className = 'text-[10px] font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded font-bold text-glow-cyan';
+      
+      document.getElementById('vec1Name').className = 'font-bold text-cyan-300 text-glow-cyan';
+      document.getElementById('vec1Val').innerText = '98% Contact in 4m';
+      document.getElementById('vec1Val').className = 'text-cyan-400 font-bold text-glow-cyan';
+      document.getElementById('vec1Bar').style.width = '98%';
+      document.getElementById('vec1Bar').className = 'bg-cyan-400 h-full rounded-full glow-cyan transition-all duration-500';
+
+      document.getElementById('vec2Name').className = 'font-bold text-cyan-300 text-glow-cyan';
+      document.getElementById('vec2Val').innerText = '64% Contact in 18m';
+      document.getElementById('vec2Val').className = 'text-cyan-300 font-bold text-glow-cyan';
+      document.getElementById('vec2Bar').style.width = '64%';
+      document.getElementById('vec2Bar').className = 'bg-cyan-400 h-full rounded-full glow-cyan transition-all duration-500';
+
+      document.getElementById('vec3Name').className = 'font-bold text-slate-300';
+      document.getElementById('vec3Val').innerText = '32% Intermittent';
+      document.getElementById('vec3Val').className = 'text-amber-400 font-bold text-glow-amber';
+      document.getElementById('vec3Bar').style.width = '32%';
+      document.getElementById('vec3Bar').className = 'bg-amber-400 h-full rounded-full glow-amber transition-all duration-500';
+
+      document.getElementById('epidemicStatus').innerText = 'LIMITED (QUOTAS: 3)';
+      document.getElementById('epidemicStatus').className = 'text-cyan-400 font-bold text-glow-cyan';
+
+      // Dynamic Topology Map View (Interactive Canvas-like SVG Node Graph)
+      document.getElementById('topoMapBox').className = 'bg-slate-950 border border-cyan-500/40 p-6 rounded-lg h-96 flex flex-col justify-between font-mono text-cyan-400 shadow-inner glow-cyan relative overflow-hidden';
+      document.getElementById('topoMapBox').innerHTML = `
+        <div class="flex justify-between items-center z-10 bg-slate-900/80 px-4 py-2 rounded border border-cyan-800/60">
+          <span class="text-xs font-bold text-cyan-300 text-glow-cyan">ADJACENCY MATRIX: MESH ACTIVE</span>
+          <span class="text-[10px] text-emerald-400 font-bold text-glow-emerald">● SYNCED (PRoPHETv2)</span>
+        </div>
+        <!-- SVG Visual Node Graph -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <svg class="w-full h-full" viewBox="0 0 600 300">
+            <!-- Connection Lines -->
+            <line x1="150" y1="150" x2="300" y2="90" stroke="#00f5d4" stroke-width="2" stroke-dasharray="4" opacity="0.8"/>
+            <line x1="300" y1="90" x2="450" y2="150" stroke="#58d6f1" stroke-width="2" opacity="0.8"/>
+            <line x1="150" y1="150" x2="300" y2="210" stroke="#ffdcc6" stroke-width="2" opacity="0.6"/>
+            <line x1="300" y1="210" x2="450" y2="150" stroke="#34d399" stroke-width="2" stroke-dasharray="4" opacity="0.8"/>
+            
+            <!-- Nodes -->
+            <g transform="translate(150, 150)">
+              <circle r="16" fill="#0a122a" stroke="#00f5d4" stroke-width="3"/>
+              <text y="30" text-anchor="middle" fill="#dbe1ff" font-size="10" font-family="monospace">Node-HQ</text>
+            </g>
+            <g transform="translate(300, 90)">
+              <circle r="14" fill="#0a122a" stroke="#58d6f1" stroke-width="3"/>
+              <text y="28" text-anchor="middle" fill="#dbe1ff" font-size="10" font-family="monospace">Drone-02</text>
+            </g>
+            <g transform="translate(300, 210)">
+              <circle r="14" fill="#0a122a" stroke="#ffdcc6" stroke-width="3"/>
+              <text y="28" text-anchor="middle" fill="#dbe1ff" font-size="10" font-family="monospace">Ambulance-04</text>
+            </g>
+            <g transform="translate(450, 150)">
+              <circle r="16" fill="#0a122a" stroke="#34d399" stroke-width="3"/>
+              <text y="30" text-anchor="middle" fill="#dbe1ff" font-size="10" font-family="monospace">Node-Medic</text>
+            </g>
+          </svg>
+        </div>
+        <div class="flex justify-between items-center z-10 bg-slate-900/80 px-4 py-2 rounded border border-slate-800 text-[11px]">
+          <span class="text-slate-400">Active Path: Node-HQ → Drone-02 → Node-Medic</span>
+          <span class="text-cyan-400 font-bold text-glow-cyan">Cost: 2 Hops (Metric: 0.842)</span>
+        </div>
+      `;
+
+      // Dynamic Bundle Cache View (Interactive Table & Queue Records)
+      document.getElementById('cacheBox').className = 'bg-slate-950 border border-amber-500/40 p-6 rounded-lg font-mono text-xs text-amber-400 space-y-4 shadow-inner';
+      document.getElementById('cacheBox').innerHTML = `
+        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2 text-slate-300">
+          <span>Storage Allocation: <strong class="text-amber-400 text-glow-amber">1.36 GB / 2.00 GB (68.4%)</strong></span>
+          <span class="text-emerald-400 font-bold text-glow-emerald">142 Bundles in Custody</span>
+        </div>
+        <div class="space-y-2">
+          <div class="bg-slate-900/90 p-2.5 rounded border border-amber-900/30 flex justify-between items-center">
+            <div>
+              <span class="text-cyan-400 font-bold text-glow-cyan">bundle://resqnet/eoc/medevac-091</span>
+              <p class="text-[10px] text-slate-400">From: Node-HQ | To: Node-Medic | Priority: <span class="text-rose-400">Critical (P0)</span></p>
+            </div>
+            <span class="text-amber-400 font-mono text-[10px] bg-amber-950/80 px-2 py-1 rounded border border-amber-800">TTL: 11h 42m remaining</span>
+          </div>
+          <div class="bg-slate-900/90 p-2.5 rounded border border-amber-900/30 flex justify-between items-center">
+            <div>
+              <span class="text-cyan-400 font-bold text-glow-cyan">bundle://resqnet/supply/triage-144</span>
+              <p class="text-[10px] text-slate-400">From: Drone-02 | To: Triage-Base | Priority: <span class="text-amber-400">Urgent (P1)</span></p>
+            </div>
+            <span class="text-amber-400 font-mono text-[10px] bg-amber-950/80 px-2 py-1 rounded border border-amber-800">TTL: 08h 15m remaining</span>
+          </div>
+          <div class="bg-slate-900/90 p-2.5 rounded border border-amber-900/30 flex justify-between items-center">
+            <div>
+              <span class="text-cyan-400 font-bold text-glow-cyan">bundle://resqnet/telemetry/sector-4</span>
+              <p class="text-[10px] text-slate-400">From: Ambulance-04 | To: Gateway-HQ | Priority: <span class="text-emerald-400">Routine (P2)</span></p>
+            </div>
+            <span class="text-amber-400 font-mono text-[10px] bg-amber-950/80 px-2 py-1 rounded border border-amber-800">TTL: 04h 50m remaining</span>
+          </div>
+        </div>
+      `;
+    }, 2500);
+
     // Tab Switching Logic
     const navLinks = document.querySelectorAll('aside nav a');
     const views = {
@@ -490,13 +780,11 @@
       link.addEventListener('click', function(e) {
         e.preventDefault();
         
-        // Update sidebar styling
         navLinks.forEach(l => l.classList.remove('bg-surface-container', 'text-primary', 'border', 'border-cyan-500/30'));
         navLinks.forEach(l => l.classList.add('text-slate-400', 'hover:bg-surface-container', 'hover:text-slate-200'));
         this.classList.remove('text-slate-400', 'hover:bg-surface-container', 'hover:text-slate-200');
         this.classList.add('bg-surface-container', 'text-primary', 'border', 'border-cyan-500/30');
 
-        // Hide all views, show selected target
         const targetId = this.getAttribute('data-target');
         Object.keys(views).forEach(id => {
           if (views[id]) {
@@ -512,7 +800,6 @@
       });
     });
 
-    // Helper for quick neighbor pill selection & target autofill
     function setTarget(nodeEid) {
       const targetInput = document.getElementById('targetNode');
       if (targetInput) {
@@ -559,6 +846,13 @@
       logMessage(`Dispatched [${priority}] bundle to ${to} (TTL: ${ttl})`);
     }
 
+    // Trigger Python Route Trace API
+    function triggerRouteTrace() {
+      const target = document.getElementById('targetNode').value || 'Node-Medic';
+      socket.emit('run-route-trace', { target: target });
+      logMessage(`Requested Python backend to compute route trace for: ${target}`);
+    }
+
     socket.on('receive-bundle', (bundle) => {
       let badgeClass = 'text-teal-400 bg-teal-950 border-teal-800';
       if (bundle.priority === 'Critical') badgeClass = 'text-rose-400 bg-rose-950 border-rose-800 text-glow-rose';
@@ -568,6 +862,8 @@
     });
 
     socket.on('update-stats', (stats) => {
+      if (isSimulationActive) return; // If simulation mode is handling mock data, don't overwrite with raw 0s
+      
       if (document.getElementById('statNodes')) {
         document.getElementById('statNodes').innerText = stats.activeNodes;
         document.getElementById('statBuffered').innerText = stats.bufferedCount;
