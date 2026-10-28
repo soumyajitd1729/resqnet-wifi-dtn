@@ -8,41 +8,74 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script id="tailwind-config">
-    tailwind.config={darkMode:"class",theme:{extend:{"colors":{"background":"#0a122a","surface":"#0a122a","surface-container":"#171e37","surface-container-low":"#131a33","surface-container-high":"#212942","surface-container-highest":"#2c344d","primary":"#d7fff3","primary-container":"#00f5d4","secondary":"#58d6f1","secondary-fixed":"#a7edff","tertiary-fixed":"#ffdcc6","tertiary-fixed-dim":"#ffb784","on-surface":"#dbe1ff","on-surface-variant":"#b9cac4","on-primary":"#00382f","error":"#ffb4ab","error-container":"#93000a"}}}}
+    tailwind.config={darkMode:"class",theme:{extend:{"colors":{"background":"#070d1e","surface":"#0a122a","surface-container":"#121b36","surface-container-low":"#0e152e","surface-container-high":"#1c2646","surface-container-highest":"#283459","primary":"#d7fff3","primary-container":"#00f5d4","secondary":"#58d6f1","secondary-fixed":"#a7edff","tertiary-fixed":"#ffdcc6","tertiary-fixed-dim":"#ffb784","on-surface":"#dbe1ff","on-surface-variant":"#b9cac4","on-primary":"#00382f","error":"#ffb4ab","error-container":"#93000a"}}}}
   </script>
   <style>
-    body { background-color: #0a122a; font-family: 'Inter', sans-serif; color: #dbe1ff; overflow-x: hidden; }
+    body { background-color: #070d1e; font-family: 'Inter', sans-serif; color: #dbe1ff; overflow-x: hidden; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0a122a; }
-    ::-webkit-scrollbar-thumb { background: #212942; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: #070d1e; }
+    ::-webkit-scrollbar-thumb { background: #1c2646; border-radius: 3px; }
+    .glow-cyan { box-shadow: 0 0 15px rgba(0, 245, 212, 0.25); }
+    .glow-rose { box-shadow: 0 0 15px rgba(225, 29, 72, 0.25); }
+    /* Neon Text Glow Effects */
+    .text-glow-cyan { text-shadow: 0 0 10px rgba(0, 245, 212, 0.6), 0 0 20px rgba(0, 245, 212, 0.3); }
+    .text-glow-rose { text-shadow: 0 0 10px rgba(244, 63, 94, 0.6), 0 0 20px rgba(244, 63, 94, 0.3); }
+    .text-glow-emerald { text-shadow: 0 0 10px rgba(52, 211, 153, 0.6), 0 0 20px rgba(52, 211, 153, 0.3); }
+    .text-glow-amber { text-shadow: 0 0 10px rgba(251, 191, 36, 0.6), 0 0 20px rgba(251, 191, 36, 0.3); }
   </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
   <!-- SIDEBAR NAVIGATION -->
-  <aside class="w-64 bg-surface-container-low border-r border-slate-800 flex flex-col justify-between hidden md:flex shrink-0">
+  <aside class="w-64 bg-surface-container-low border-r border-slate-800/80 flex flex-col justify-between hidden md:flex shrink-0">
     <div class="p-5 space-y-6">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary-container text-2xl">radar</span>
-        <span class="font-bold text-lg text-primary-container tracking-wider">ResQNet</span>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary-container text-2xl animate-pulse text-glow-cyan">radar</span>
+        </div>
+        <div>
+          <span class="font-bold text-lg text-slate-100 tracking-wider block leading-none text-glow-cyan">ResQNet</span>
+          <span class="text-[10px] text-cyan-400 font-mono tracking-widest">TACTICAL DTN v2.4</span>
+        </div>
       </div>
       <div class="space-y-1">
         <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Node Operating Mode</p>
-        <div class="bg-surface-container p-2 rounded text-xs text-cyan-400 font-mono border border-cyan-900/50">GATEWAY / RELAY</div>
+        <div class="bg-surface-container p-2.5 rounded-lg text-xs text-cyan-400 font-mono border border-cyan-900/50 flex items-center justify-between shadow-inner">
+          <span class="text-glow-cyan font-bold">GATEWAY / RELAY</span>
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+        </div>
       </div>
-      <nav class="space-y-1 text-sm">
-        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded bg-surface-container text-primary font-medium"><span class="material-symbols-outlined text-lg">grid_view</span> Overview / Bundles</a>
-        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">hub</span> Topology Map</a>
-        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">inventory_2</span> Bundle Cache</a>
-        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">settings</span> Radio Config</a>
-        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">terminal</span> Terminal Feed</a>
+      <nav class="space-y-1.5 text-sm cursor-pointer font-medium">
+        <a data-target="view-overview" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-surface-container text-primary border border-cyan-500/30 shadow-md transition-all">
+          <span class="material-symbols-outlined text-lg text-cyan-400 text-glow-cyan">grid_view</span> Overview / Bundles
+        </a>
+        <a data-target="view-topology" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-400 hover:bg-surface-container hover:text-slate-200 transition-all">
+          <span class="material-symbols-outlined text-lg">hub</span> Topology Map
+        </a>
+        <a data-target="view-cache" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-400 hover:bg-surface-container hover:text-slate-200 transition-all">
+          <span class="material-symbols-outlined text-lg">inventory_2</span> Bundle Cache
+        </a>
+        <a data-target="view-radio" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-400 hover:bg-surface-container hover:text-slate-200 transition-all">
+          <span class="material-symbols-outlined text-lg">settings_input_antenna</span> Radio Config
+        </a>
+        <a data-target="view-terminal" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-400 hover:bg-surface-container hover:text-slate-200 transition-all">
+          <span class="material-symbols-outlined text-lg">terminal</span> Terminal Feed
+        </a>
       </nav>
     </div>
     <!-- Sidebar Footer Buffer Meter -->
-    <div class="p-4 bg-surface-container/50 border-t border-slate-800 text-xs space-y-1">
-      <div class="flex justify-between text-slate-400"><span>CUSTODY BUFFER</span><span>68.4%</span></div>
-      <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="bg-primary-container h-full w-[684%]"></div></div>
-      <div class="flex justify-between text-[10px] text-slate-500 pt-1"><span>1.36 GB / 2.00 GB</span><span>142 PKTS</span></div>
+    <div class="p-4 bg-surface-container/60 border-t border-slate-800/80 text-xs space-y-2">
+      <div class="flex justify-between text-slate-400 font-mono text-[11px]">
+        <span>CUSTODY BUFFER</span>
+        <span class="text-cyan-400 font-bold text-glow-cyan">68.4%</span>
+      </div>
+      <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800 p-0.5">
+        <div class="bg-gradient-to-r from-cyan-500 to-primary-container h-full rounded-full glow-cyan" style="width: 68.4%;"></div>
+      </div>
+      <div class="flex justify-between text-[10px] text-slate-400 font-mono pt-0.5">
+        <span>1.36 GB / 2.00 GB</span>
+        <span class="text-emerald-400 font-bold text-glow-emerald">142 PKTS</span>
+      </div>
     </div>
   </aside>
 
@@ -50,205 +83,498 @@
   <div class="flex-1 flex flex-col h-full overflow-y-auto">
     
     <!-- TOP HEADER -->
-    <header class="h-16 bg-surface-container-low border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
-      <div class="flex items-center gap-3">
-        <span class="font-bold text-lg text-slate-100">ResQNet DTN Command Center</span>
-        <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+    <header class="h-16 bg-surface-container-low border-b border-slate-800/80 flex items-center justify-between px-6 shrink-0">
+      <div class="flex items-center gap-4">
+        <span class="font-bold text-lg text-slate-100 tracking-wide text-glow-cyan">ResQNet DTN Command Center</span>
+        <span class="text-xs bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 px-3 py-1 rounded-full flex items-center gap-2 font-mono shadow-sm text-glow-emerald">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> STATUS: AD-HOC MESH LINKED - 2.4/5GHZ DUAL DTN
         </span>
       </div>
       <div class="flex items-center gap-6 text-xs font-mono">
-        <span class="text-slate-400">CHANNEL <strong class="text-cyan-400">CH-06 EMERGENCY RELAY</strong></span>
-        <span class="text-slate-400">UPTIME <strong class="text-emerald-400">48:19:04:12</strong></span>
+        <span class="text-slate-400">CHANNEL <strong class="text-cyan-400 bg-cyan-950/50 px-2 py-0.5 rounded border border-cyan-800/50 text-glow-cyan">CH-06 EMERGENCY RELAY</strong></span>
+        <span class="text-slate-400">UPTIME <strong class="text-emerald-400 text-glow-emerald">48:19:04:12</strong></span>
       </div>
     </header>
 
     <!-- DASHBOARD BODY CONTAINER -->
     <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
       
-      <!-- HERO BANNER -->
-      <section class="bg-surface-container border border-slate-800 p-6 rounded-xl flex items-center justify-between shadow-lg">
-        <div class="space-y-1">
-          <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
-            <span class="bg-primary-container/20 text-primary-container px-2 py-0.5 rounded font-bold">MISSION DIRECTIVE ALPHA-09</span>
-            <span>EID: dtn://incident-alpha.resqnet.int</span>
-          </div>
-          <h1 class="text-2xl font-bold text-slate-100">ResQNet DTN Command Center</h1>
-          <p class="text-xs text-slate-400">Disaster Relief Ad-Hoc Store-and-Forward Network / Telemetry Relay</p>
-        </div>
-        <div class="flex items-center gap-6 font-mono text-xs bg-slate-950 p-4 rounded-lg border border-slate-800">
-          <div><p class="text-slate-500">DTN MESH</p><p class="text-emerald-400 font-bold">Ad-Hoc Direct</p></div>
-          <div><p class="text-slate-500">SIGNAL RSSI</p><p class="text-cyan-400 font-bold">-68 dBm</p></div>
-          <div><p class="text-slate-500">THRESHOLD</p><p class="text-slate-200 font-bold">≤ 4 Hops</p></div>
-          <div><p class="text-slate-500">PROTOCOL</p><p class="text-purple-400 font-bold">BPv7 (RFC 9171)</p></div>
-        </div>
-      </section>
-
-      <!-- 4-COLUMN ANALYTICS GRID -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Active Nodes -->
-        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
-          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Active Nodes</span><span class="material-symbols-outlined text-cyan-400">hub</span></div>
-          <div class="my-2"><span id="statNodes" class="text-3xl font-extrabold text-cyan-400 font-mono">0</span></div>
-          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Connected peers</span><span class="text-emerald-400">Online</span></div>
-        </div>
-        <!-- Buffered Bundles -->
-        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
-          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Buffered Bundles</span><span class="material-symbols-outlined text-amber-400">inventory_2</span></div>
-          <div class="my-2"><span id="statBuffered" class="text-3xl font-extrabold text-amber-400 font-mono">0</span></div>
-          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Store & Forward Queue</span><span>Pending</span></div>
-        </div>
-        <!-- Total Dispatched -->
-        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
-          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Total Dispatched</span><span class="material-symbols-outlined text-indigo-400">send</span></div>
-          <div class="my-2"><span id="statDispatched" class="text-3xl font-extrabold text-indigo-400 font-mono">0</span></div>
-          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Outbound packets</span><span class="text-indigo-400">BPv7</span></div>
-        </div>
-        <!-- Total Delivered -->
-        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
-          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Total Delivered</span><span class="material-symbols-outlined text-emerald-400">verified</span></div>
-          <div class="my-2"><span id="statDelivered" class="text-3xl font-extrabold text-emerald-400 font-mono">0</span></div>
-          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Custody confirmed</span><span class="text-emerald-400">100%</span></div>
-        </div>
-      </section>
-
-      <!-- 2-COLUMN SECTION: NODE ONBOARDING & DISPATCH FORM -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- ================= 1. OVERVIEW / BUNDLES VIEW ================= -->
+      <div id="view-overview" class="space-y-6">
         
-        <!-- Node Onboarding -->
-        <div class="bg-surface-container border border-slate-800 p-6 rounded-xl space-y-4">
-          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
-            <span class="material-symbols-outlined text-cyan-400">person_add</span>
-            <h2 class="font-bold text-slate-200">Node Registration & Peer Handshake</h2>
-          </div>
-          <div class="space-y-3">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Your Node Name / EID</label>
-              <!-- ID set to nodeName for Python backend -->
-              <input type="text" id="nodeName" value="Node-HQ" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-cyan-400" />
+        <!-- HERO BANNER -->
+        <section class="bg-surface-container border border-slate-800/80 p-6 rounded-xl flex flex-col lg:flex-row items-start lg:items-center justify-between shadow-lg gap-4 relative overflow-hidden">
+          <div class="absolute right-0 top-0 bottom-0 w-96 bg-gradient-to-l from-cyan-500/5 to-transparent pointer-events-none"></div>
+          <div class="space-y-1.5 z-10">
+            <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-0.5 rounded font-bold text-glow-cyan">MISSION DIRECTIVE ALPHA-09</span>
+              <span class="text-slate-400">EID: dtn://incident-alpha.resqnet.int</span>
             </div>
-            <!-- Join Button wired to register() -->
-            <button onclick="register()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-lg transition duration-200 shadow-lg shadow-cyan-500/20 text-sm flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined">polyline</span> Join Local Network
+            <h1 class="text-2xl font-extrabold text-slate-100 tracking-tight text-glow-cyan">ResQNet DTN Command Center</h1>
+            <p class="text-xs text-slate-400">Disaster Relief Ad-Hoc Store-and-Forward Network / Telemetry Relay</p>
+          </div>
+          <div class="flex items-center gap-5 font-mono text-xs bg-slate-950/80 p-3.5 rounded-lg border border-slate-800 shadow-inner z-10">
+            <div class="px-2 border-r border-slate-800"><p class="text-slate-500 text-[10px]">DTN MESH</p><p class="text-emerald-400 font-bold text-glow-emerald">Ad-Hoc Direct</p></div>
+            <div class="px-2 border-r border-slate-800"><p class="text-slate-500 text-[10px]">SIGNAL RSSI</p><p class="text-cyan-400 font-bold text-glow-cyan">-68 dBm</p></div>
+            <div class="px-2 border-r border-slate-800"><p class="text-slate-500 text-[10px]">THRESHOLD</p><p class="text-slate-200 font-bold">≤ 4 Hops</p></div>
+            <div class="px-2"><p class="text-slate-500 text-[10px]">PROTOCOL</p><p class="text-purple-400 font-bold">BPv7 (RFC 9171)</p></div>
+          </div>
+        </section>
+
+        <!-- 4-COLUMN ANALYTICS GRID WITH NEON METRICS -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Active Nodes -->
+          <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+              <span>Active Nodes</span>
+              <span class="material-symbols-outlined text-cyan-400 text-xl text-glow-cyan">hub</span>
+            </div>
+            <div class="my-2 flex items-baseline justify-between">
+              <span id="statNodes" class="text-3xl font-extrabold text-cyan-400 font-mono text-glow-cyan">0</span>
+              <span class="text-[10px] text-cyan-400/80 font-mono bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-800/50">+3 mobile relays</span>
+            </div>
+            <div class="h-6 w-full my-1">
+              <svg class="w-full h-full text-cyan-400" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,20 Q20,5 40,15 T80,8 T100,12" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+              <span>Connected peers</span>
+              <span class="text-emerald-400 font-bold text-glow-emerald">Online</span>
+            </div>
+          </div>
+
+          <!-- Buffered Bundles -->
+          <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+              <span>Buffered Bundles</span>
+              <span class="material-symbols-outlined text-amber-400 text-xl text-glow-amber">inventory_2</span>
+            </div>
+            <div class="my-2 flex items-baseline justify-between">
+              <span id="statBuffered" class="text-3xl font-extrabold text-amber-400 font-mono text-glow-amber">0</span>
+              <span class="text-[10px] text-amber-400/80 font-mono bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-800/50">Store & Forward</span>
+            </div>
+            <div class="h-6 w-full my-1">
+              <svg class="w-full h-full text-amber-400" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,15 Q30,22 50,10 T80,18 T100,5" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+              <span>Custody Queue</span>
+              <span class="text-amber-400 font-bold text-glow-amber">Pending</span>
+            </div>
+          </div>
+
+          <!-- Total Dispatched -->
+          <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+              <span>Total Dispatched</span>
+              <span class="material-symbols-outlined text-indigo-400 text-xl">send</span>
+            </div>
+            <div class="my-2 flex items-baseline justify-between">
+              <span id="statDispatched" class="text-3xl font-extrabold text-indigo-400 font-mono">0</span>
+              <span class="text-[10px] text-indigo-400/80 font-mono bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-800/50">~+312 / hr</span>
+            </div>
+            <div class="h-6 w-full my-1">
+              <svg class="w-full h-full text-indigo-400" viewBox="0 0 100 25" preserveAspectRatio="none">
+                <path d="M0,22 Q25,18 45,8 T85,12 T100,2" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+              <span>Outbound packets</span>
+              <span class="text-indigo-400 font-bold">BPv7 / TCPCL</span>
+            </div>
+          </div>
+
+          <!-- Total Delivered with Circular ACK Ratio -->
+          <div class="bg-surface-container border border-slate-800/80 p-4 rounded-xl flex flex-col justify-between shadow-md relative overflow-hidden">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
+              <span>Total Delivered</span>
+              <span class="material-symbols-outlined text-emerald-400 text-xl text-glow-emerald">verified</span>
+            </div>
+            <div class="my-2 flex items-baseline justify-between">
+              <span id="statDelivered" class="text-3xl font-extrabold text-emerald-400 font-mono text-glow-emerald">0</span>
+              <span class="text-[10px] text-emerald-400 font-mono bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 font-bold text-glow-emerald">ACK CONFIRMED</span>
+            </div>
+            <div class="flex items-center gap-2 h-6 my-1 font-mono text-[11px] text-emerald-300">
+              <span class="w-4 h-4 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin inline-block"></span>
+              <span><strong>91.4%</strong> Delivery Ratio</span>
+            </div>
+            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2 font-mono">
+              <span>Custody Transfers</span>
+              <span class="text-emerald-400 font-bold text-glow-emerald">100% Verified</span>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- NODE ONBOARDING SECTION -->
+        <div class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-4 shadow-md">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-cyan-400 text-glow-cyan">person_add</span>
+              <h2 class="font-bold text-slate-200">Node Registration & Peer Handshake</h2>
+            </div>
+            <span class="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded text-glow-cyan">RADAR: 2.4/5GHZ MESH SCAN ON</span>
+          </div>
+          <p class="text-xs text-slate-400">Register a new mobile field unit, drone relay, or triage vehicle to the local store-and-forward mesh routing table.</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div class="md:col-span-2">
+              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Your Node Name / EID</label>
+              <div class="relative">
+                <input type="text" id="nodeName" value="Node-HQ" class="w-full bg-slate-950/80 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-cyan-400 transition-colors" />
+                <span class="absolute right-3 top-3 text-xs text-cyan-400 font-mono text-glow-cyan">AUTO-PROBE</span>
+              </div>
+            </div>
+            <button onclick="register()" class="w-full bg-primary-container hover:bg-cyan-300 text-slate-950 font-extrabold py-3 rounded-lg transition duration-200 glow-cyan text-sm flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-lg">polyline</span> Join Local Network
             </button>
+          </div>
+
+          <!-- Quick Neighbor Selector Chips -->
+          <div class="pt-2">
+            <label class="block text-[10px] text-slate-400 mb-1.5 uppercase font-mono">Recently Discovered Mesh Neighbors</label>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono">
+              <button onclick="setTarget('DRONE-RELAY-02')" class="bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-800/60 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> DRONE-RELAY-02 <span class="text-[9px] text-cyan-400 text-glow-cyan">[CONNECTED]</span>
+              </button>
+              <button onclick="setTarget('TRIAGE-BASE-MED')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> TRIAGE-BASE-MED <span class="text-[9px] text-emerald-400">[1-HOP CUSTODY]</span>
+              </button>
+              <button onclick="setTarget('AMBULANCE-04')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> AMBULANCE-04 <span class="text-[9px] text-amber-400">[IN TRANSIT]</span>
+              </button>
+              <button onclick="setTarget('SEARCH-K9-ALPHA')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span> SEARCH-K9-ALPHA <span class="text-[9px] text-slate-400">[STORED: 14 BUNDLES]</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Emergency Bundle Dispatch -->
-        <div class="bg-surface-container border border-slate-800 p-6 rounded-xl space-y-4">
-          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
-            <span class="material-symbols-outlined text-rose-400">emergency_share</span>
-            <h2 class="font-bold text-slate-200">Emergency Bundle Dispatch</h2>
+        <!-- EMERGENCY DISPATCH & STITCH-MATCHED RELAY VECTORS GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Emergency Bundle Dispatch with TTL -->
+          <div class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-4 shadow-md flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-rose-400 text-glow-rose">emergency_share</span>
+                <h2 class="font-bold text-slate-200">Emergency Bundle Dispatch</h2>
+              </div>
+              <span class="text-[10px] font-mono text-rose-400 bg-rose-950/60 border border-rose-800/60 px-2 py-0.5 rounded text-glow-rose">BPv7 COMPLIANT</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Destination Node EID</label>
+                <div class="relative">
+                  <input type="text" id="targetNode" value="Node-Medic" class="w-full bg-slate-950/80 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-rose-400 transition-colors" />
+                  <span class="absolute right-3 top-3 text-[10px] text-cyan-400 font-mono text-glow-cyan">USE EOC PRIMARY</span>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Priority Level</label>
+                  <select id="priority" class="w-full bg-slate-950/80 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-100 focus:outline-none focus:border-rose-400">
+                    <option value="Critical">🔴 Critical (P0)</option>
+                    <option value="Urgent">🟠 Urgent (P1)</option>
+                    <option value="Routine" selected>🟢 Routine (P2)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">TTL Expiration Window</label>
+                  <select id="bundleTtl" class="w-full bg-slate-950/80 border border-slate-800 rounded-lg p-3 text-xs font-mono text-cyan-400 focus:outline-none focus:border-rose-400">
+                    <option value="12h" selected>⏳ 12 Hours (Tactical)</option>
+                    <option value="24h">⏳ 24 Hours (Extended)</option>
+                    <option value="2h">⚡ 2 Hours (Urgent Lifespan)</option>
+                    <option value="7d">🗓️ 7 Days (Store-Carry)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Telemetric Payload</label>
+                <textarea id="payload" rows="2" class="w-full bg-slate-950/80 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-100 focus:outline-none resize-none">URGENT: MEDEVAC RQST @ SECTOR-4. 2 CRITICAL P1 PATIENTS.</textarea>
+              </div>
+              <button onclick="sendBundle()" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-lg transition duration-200 glow-rose text-sm flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-lg">forward</span> Dispatch DTN Bundle with TTL
+              </button>
+            </div>
           </div>
-          <div class="space-y-3">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Destination Node EID</label>
-              <!-- ID set to targetNode -->
-              <input type="text" id="targetNode" value="Node-Medic" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-rose-400" />
+
+          <!-- Stitch-Matched Relay Vectors Card -->
+          <div class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-4 shadow-md flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-cyan-400 text-glow-cyan">satellite_alt</span>
+                <h2 class="font-bold text-slate-200">Relay Vectors</h2>
+              </div>
+              <span class="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded font-bold text-glow-cyan">VECTOR 03 ACTIVE</span>
             </div>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Priority Level</label>
-              <!-- ID set to priority -->
-              <select id="priority" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-rose-400">
-                <option value="Critical">🔴 Critical (P0 - Medical / Life Support)</option>
-                <option value="Urgent">🟠 Urgent (P1 - Supplies / Food)</option>
-                <option value="Routine" selected>🟢 Routine (P2 - Telemetry Sync)</option>
-              </select>
+            
+            <p class="text-xs text-slate-400 leading-relaxed font-sans">
+              Calculated opportunistic contact probability for queued bundles in the local sector.
+            </p>
+
+            <div class="space-y-3 font-mono text-xs">
+              
+              <!-- Vector Item 1: UAV Sky-Swarm -->
+              <div class="bg-slate-950/90 p-3 rounded-lg border border-slate-800 space-y-1.5 shadow-inner">
+                <div class="flex justify-between items-center text-slate-200">
+                  <span class="font-bold text-cyan-300 text-glow-cyan">UAV SKY-SWARM-49</span>
+                  <span class="text-cyan-400 font-bold text-glow-cyan">98% Contact in 4m</span>
+                </div>
+                <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                  <div class="bg-cyan-400 h-full rounded-full glow-cyan" style="width: 98%;"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
+                  <span>LoRa 915MHz Direct</span>
+                  <span class="text-slate-300 font-bold">128 Kbps</span>
+                </div>
+              </div>
+
+              <!-- Vector Item 2: Mobile Clinic #3 -->
+              <div class="bg-slate-950/90 p-3 rounded-lg border border-slate-800 space-y-1.5 shadow-inner">
+                <div class="flex justify-between items-center text-slate-200">
+                  <span class="font-bold text-cyan-300 text-glow-cyan">MOBILE CLINIC #3</span>
+                  <span class="text-cyan-300 font-bold text-glow-cyan">64% Contact in 18m</span>
+                </div>
+                <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                  <div class="bg-cyan-400 h-full rounded-full glow-cyan" style="width: 64%;"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
+                  <span>Wi-Fi Ad-Hoc 802.11p</span>
+                  <span class="text-slate-300 font-bold">5.4 Mbps</span>
+                </div>
+              </div>
+
+              <!-- Vector Item 3: Ambulance Convoy B -->
+              <div class="bg-slate-950/90 p-3 rounded-lg border border-slate-800 space-y-1.5 shadow-inner">
+                <div class="flex justify-between items-center text-slate-200">
+                  <span class="font-bold text-slate-300">AMBULANCE CONVOY B</span>
+                  <span class="text-amber-400 font-bold text-glow-amber">32% Intermittent</span>
+                </div>
+                <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                  <div class="bg-amber-400 h-full rounded-full glow-amber" style="width: 32%;"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
+                  <span>BLE 5.2 Store-Forward</span>
+                  <span class="text-slate-300 font-bold">320 Kbps</span>
+                </div>
+              </div>
+
+              <!-- Epidemic Quotas Footer -->
+              <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800/80 text-[11px]">
+                <span class="text-slate-400 font-bold uppercase">EPIDEMIC ROUTING:</span>
+                <span class="text-cyan-400 font-bold text-glow-cyan">LIMITED (QUOTAS: 3)</span>
+              </div>
+
             </div>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Telemetric Payload</label>
-              <!-- ID set to payload -->
-              <textarea id="payload" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-100 focus:outline-none resize-none">URGENT: MEDEVAC RQST @ SECTOR-4. 2 CRITICAL P1 PATIENTS.</textarea>
-            </div>
-            <!-- Dispatch Button wired to sendBundle() -->
-            <button onclick="sendBundle()" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg shadow-rose-600/20 text-sm flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined">forward</span> Dispatch DTN Bundle
-            </button>
           </div>
+
         </div>
+
+        <!-- TERMINAL FEED LOG -->
+        <section class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-3 shadow-md">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary-container text-glow-cyan">terminal</span>
+              <h2 class="font-bold text-slate-200 text-sm">ResQNet Mesh Daemon Terminal Log</h2>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">REALTIME SOCKET IO</span>
+          </div>
+          <div id="log" class="bg-slate-950/90 border border-slate-800/80 p-4 h-40 overflow-y-auto font-mono text-xs text-slate-300 rounded-lg space-y-1 shadow-inner">
+            <div>> System initialized. Ready to connect...</div>
+          </div>
+        </section>
 
       </div>
 
-      <!-- TERMINAL FEED LOG -->
-      <section class="bg-surface-container border border-slate-800 p-6 rounded-xl space-y-3">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-container">terminal</span>
-            <h2 class="font-bold text-slate-200 text-sm">ResQNet Mesh Daemon Terminal Log</h2>
+      <!-- ================= 2. TOPOLOGY MAP VIEW ================= -->
+      <div id="view-topology" class="space-y-6 hidden">
+        <section class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800/80 pb-3">
+            <span class="material-symbols-outlined text-cyan-400 text-glow-cyan">hub</span>
+            <h2 class="font-bold text-slate-200 text-lg">Dynamic Mesh Topology Map (RFC 9171)</h2>
           </div>
-        </div>
-        <!-- ID set to log -->
-        <div id="log" class="bg-slate-950 border border-slate-800 p-4 h-40 overflow-y-auto font-mono text-xs text-slate-300 rounded-lg space-y-1">
-          <div>> System initialized. Ready to connect to Python backend...</div>
-        </div>
-      </section>
+          <p class="text-xs text-slate-400">Real-time adjacency graph visualizing opportunistic contact links between mobile incident nodes.</p>
+          <div class="bg-slate-950 border border-slate-800 p-8 rounded-lg h-72 flex flex-col items-center justify-center font-mono text-cyan-400 space-y-3 shadow-inner">
+            <span class="material-symbols-outlined text-5xl animate-pulse text-cyan-400 text-glow-cyan">radar</span>
+            <div class="text-base font-bold text-glow-cyan">[MESH GRAPH ACTIVE] Node-HQ ↔ Drone-Relay-02 ↔ Node-Medic</div>
+            <p class="text-xs text-slate-500">Max Hop Limit: ≤ 4 Hops • Protocol: BPv7 TCPCL</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= 3. BUNDLE CACHE VIEW ================= -->
+      <div id="view-cache" class="space-y-6 hidden">
+        <section class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800/80 pb-3">
+            <span class="material-symbols-outlined text-amber-400 text-glow-amber">inventory_2</span>
+            <h2 class="font-bold text-slate-200 text-lg">Store-Carry-Forward Bundle Cache</h2>
+          </div>
+          <p class="text-xs text-slate-400">Inspecting non-volatile flash storage buffer for offline nodes and custody transfer records.</p>
+          <div class="bg-slate-950 border border-slate-800 p-6 rounded-lg font-mono text-xs text-amber-400 space-y-2 shadow-inner">
+            <div>> Storage Allocation: 1.36 GB / 2.00 GB (68.4% Capacity)</div>
+            <div>> Active Custody Transfers: <span class="text-glow-amber font-bold">142 Packets Pending</span></div>
+            <div>> TTL Policy: 12-hour Tactical Expiration Window</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= 4. RADIO CONFIG VIEW ================= -->
+      <div id="view-radio" class="space-y-6 hidden">
+        <section class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800/80 pb-3">
+            <span class="material-symbols-outlined text-indigo-400">settings_input_antenna</span>
+            <h2 class="font-bold text-slate-200 text-lg">Physical Layer Radio Configuration</h2>
+          </div>
+          <p class="text-xs text-slate-400">Multi-band tactical interface management for resilient disaster relief communication.</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+            <div class="bg-slate-950 p-4 rounded-lg border border-cyan-500 space-y-2 shadow-md">
+              <div class="text-cyan-400 font-bold text-glow-cyan">Wi-Fi Ad-Hoc (5GHz)</div>
+              <div class="text-[11px] text-slate-400">Bandwidth: 54 Mbps<br/>Status: <span class="text-emerald-400 text-glow-emerald">ACTIVE / LINKED</span></div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-2">
+              <div class="text-slate-300 font-bold">LoRa (915MHz)</div>
+              <div class="text-[11px] text-slate-500">Bandwidth: 128 Kbps<br/>Status: STANDBY (Long Range)</div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-2">
+              <div class="text-slate-300 font-bold">Bluetooth LE 5.2</div>
+              <div class="text-[11px] text-slate-500">Bandwidth: 320 Kbps<br/>Status: STANDBY (Opportunistic)</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= 5. TERMINAL FEED VIEW ================= -->
+      <div id="view-terminal" class="space-y-6 hidden">
+        <section class="bg-surface-container border border-slate-800/80 p-6 rounded-xl space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800/80 pb-3">
+            <span class="material-symbols-outlined text-primary-container text-glow-cyan">terminal</span>
+            <h2 class="font-bold text-slate-200 text-lg">Daemon Terminal Feed & BPv7 Logs</h2>
+          </div>
+          <p class="text-xs text-slate-400">Low-level bundle protocol packet encapsulation and socket handshake daemon output.</p>
+          <div id="full-terminal-log" class="bg-slate-950 border border-slate-800 p-4 h-64 overflow-y-auto font-mono text-xs text-slate-300 rounded-lg space-y-1 shadow-inner">
+            <div>> [DAEMON] resqnet-mesh-daemon v2.4.1 initialized.</div>
+            <div>> [NET] Listening for TCPCL connections on port 3000...</div>
+          </div>
+        </section>
+      </div>
 
     </main>
   </div>
 
-  <!-- Socket.io Real-Time Bridge Script -->
-<!-- Socket.io Real-Time Bridge Script -->
-<!-- Load Socket.io locally from your Python server -->
-<script src="/socket.io.min.js"></script>
-<script>
-  // Fallback to cdnjs if local static fails
-  if (typeof io === 'undefined') {
-    document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"><\/script>');
-  }
-</script>
-
-<script>
-  // Now io is guaranteed to exist!
-  const socket = io();
-
-  function logMessage(text) {
-    const box = document.getElementById('log');
-    if (box) {
-      box.innerHTML += `<div>> ${text}</div>`;
-      box.scrollTop = box.scrollHeight;
+  <!-- Robust Socket.io CDN with automatic fallback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    if (typeof io === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.5/dist/socket.io.min.js"><\/script>');
     }
-  }
+  </script>
 
-  socket.on('connect', () => {
-    logMessage('Connected to Python backend successfully via WebSockets!');
-  });
+  <script>
+    // Tab Switching Logic
+    const navLinks = document.querySelectorAll('aside nav a');
+    const views = {
+      'view-overview': document.getElementById('view-overview'),
+      'view-topology': document.getElementById('view-topology'),
+      'view-cache': document.getElementById('view-cache'),
+      'view-radio': document.getElementById('view-radio'),
+      'view-terminal': document.getElementById('view-terminal')
+    };
 
-  socket.on('disconnect', () => {
-    logMessage('⚠️ Disconnected from Python backend.');
-  });
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Update sidebar styling
+        navLinks.forEach(l => l.classList.remove('bg-surface-container', 'text-primary', 'border', 'border-cyan-500/30'));
+        navLinks.forEach(l => l.classList.add('text-slate-400', 'hover:bg-surface-container', 'hover:text-slate-200'));
+        this.classList.remove('text-slate-400', 'hover:bg-surface-container', 'hover:text-slate-200');
+        this.classList.add('bg-surface-container', 'text-primary', 'border', 'border-cyan-500/30');
 
-  function register() {
-    const name = document.getElementById('nodeName').value;
-    socket.emit('register-node', name);
-    logMessage(`Registered on local network as: ${name}`);
-  }
+        // Hide all views, show selected target
+        const targetId = this.getAttribute('data-target');
+        Object.keys(views).forEach(id => {
+          if (views[id]) {
+            if (id === targetId) {
+              views[id].classList.remove('hidden');
+            } else {
+              views[id].classList.add('hidden');
+            }
+          }
+        });
 
-  function sendBundle() {
-    const from = document.getElementById('nodeName').value;
-    const to = document.getElementById('targetNode').value;
-    const priority = document.getElementById('priority').value;
-    const payload = document.getElementById('payload').value;
-    
-    socket.emit('send-bundle', { from, to, priority, payload, time: new Date().toLocaleTimeString() });
-    logMessage(`Dispatched [${priority}] bundle to ${to}`);
-  }
+        logMessage(`Switched active view to: ${this.innerText.trim()}`);
+      });
+    });
 
-  socket.on('receive-bundle', (bundle) => {
-    let badgeClass = 'text-teal-400 bg-teal-950 border-teal-800';
-    if (bundle.priority === 'Critical') badgeClass = 'text-rose-400 bg-rose-950 border-rose-800';
-    if (bundle.priority === 'Urgent') badgeClass = 'text-amber-400 bg-amber-950 border-amber-800';
-
-    logMessage(`📦 <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${badgeClass}">[${bundle.priority}]</span> From ${bundle.from}: "${bundle.payload}"`);
-  });
-
-  socket.on('update-stats', (stats) => {
-    if (document.getElementById('statNodes')) {
-      document.getElementById('statNodes').innerText = stats.activeNodes;
-      document.getElementById('statBuffered').innerText = stats.bufferedCount;
-      document.getElementById('statDispatched').innerText = stats.totalDispatched;
-      document.getElementById('statDelivered').innerText = stats.totalDelivered;
+    // Helper for quick neighbor pill selection & target autofill
+    function setTarget(nodeEid) {
+      const targetInput = document.getElementById('targetNode');
+      if (targetInput) {
+        targetInput.value = nodeEid;
+        logMessage(`Selected destination target: ${nodeEid}`);
+      }
     }
-  });
-</script>
+
+    // Socket.io Connection & Logic
+    const socket = io();
+
+    function logMessage(text) {
+      const box = document.getElementById('log');
+      const fullBox = document.getElementById('full-terminal-log');
+      const timestamp = new Date().toLocaleTimeString();
+      
+      const entry = `<div>[${timestamp}] > ${text}</div>`;
+      if (box) { box.innerHTML += entry; box.scrollTop = box.scrollHeight; }
+      if (fullBox) { fullBox.innerHTML += entry; fullBox.scrollTop = fullBox.scrollHeight; }
+    }
+
+    socket.on('connect', () => {
+      logMessage('Connected to Python backend successfully via WebSockets!');
+    });
+
+    socket.on('disconnect', () => {
+      logMessage('⚠️ Disconnected from Python backend.');
+    });
+
+    function register() {
+      const name = document.getElementById('nodeName').value;
+      socket.emit('register-node', name);
+      logMessage(`Registered on local network as: ${name}`);
+    }
+
+    function sendBundle() {
+      const from = document.getElementById('nodeName').value;
+      const to = document.getElementById('targetNode').value;
+      const priority = document.getElementById('priority').value;
+      const ttl = document.getElementById('bundleTtl').value;
+      const payload = document.getElementById('payload').value;
+      
+      socket.emit('send-bundle', { from, to, priority, ttl, payload, time: new Date().toLocaleTimeString() });
+      logMessage(`Dispatched [${priority}] bundle to ${to} (TTL: ${ttl})`);
+    }
+
+    socket.on('receive-bundle', (bundle) => {
+      let badgeClass = 'text-teal-400 bg-teal-950 border-teal-800';
+      if (bundle.priority === 'Critical') badgeClass = 'text-rose-400 bg-rose-950 border-rose-800 text-glow-rose';
+      if (bundle.priority === 'Urgent') badgeClass = 'text-amber-400 bg-amber-950 border-amber-800 text-glow-amber';
+
+      logMessage(`📦 <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${badgeClass}">[${bundle.priority}]</span> From ${bundle.from} (TTL: ${bundle.ttl || '12h'}): "${bundle.payload}"`);
+    });
+
+    socket.on('update-stats', (stats) => {
+      if (document.getElementById('statNodes')) {
+        document.getElementById('statNodes').innerText = stats.activeNodes;
+        document.getElementById('statBuffered').innerText = stats.bufferedCount;
+        document.getElementById('statDispatched').innerText = stats.totalDispatched;
+        document.getElementById('statDelivered').innerText = stats.totalDelivered;
+      }
+    });
+  </script>
 </body>
 </html>
