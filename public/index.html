@@ -1,107 +1,254 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResQNet Wi-Fi DTN Node</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>ResQNet DTN Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config={darkMode:"class",theme:{extend:{"colors":{"background":"#0a122a","surface":"#0a122a","surface-container":"#171e37","surface-container-low":"#131a33","surface-container-high":"#212942","surface-container-highest":"#2c344d","primary":"#d7fff3","primary-container":"#00f5d4","secondary":"#58d6f1","secondary-fixed":"#a7edff","tertiary-fixed":"#ffdcc6","tertiary-fixed-dim":"#ffb784","on-surface":"#dbe1ff","on-surface-variant":"#b9cac4","on-primary":"#00382f","error":"#ffb4ab","error-container":"#93000a"}}}}
+  </script>
   <style>
-    body { background: #0b132b; color: #fff; font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    .card { background: #1c2541; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #48cae4; }
-    input, select, button { width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 12px; background: #0b132b; color: #fff; border: 1px solid #48cae4; border-radius: 4px; box-sizing: border-box; }
-    button { background: #00b4d8; font-weight: bold; cursor: pointer; }
-    button:hover { background: #90e0ef; color: #0b132b; }
-    .log { background: #050814; padding: 10px; height: 160px; overflow-y: auto; font-family: monospace; font-size: 13px; border-radius: 4px; }
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; }
-    .stat-box { background: #0b132b; padding: 8px; border-radius: 4px; border: 1px solid #3a86ff; text-align: center; }
-    .badge-critical { background: #d90429; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; }
-    .badge-urgent { background: #fb8500; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #000; }
-    .badge-routine { background: #2ec4b6; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #000; }
+    body { background-color: #0a122a; font-family: 'Inter', sans-serif; color: #dbe1ff; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0a122a; }
+    ::-webkit-scrollbar-thumb { background: #212942; border-radius: 3px; }
   </style>
 </head>
-<body>
+<body class="flex h-screen overflow-hidden">
 
-  <!-- Analytics Dashboard Panel -->
-  <div class="card">
-    <h3>📊 Network Analytics Dashboard</h3>
-    <div class="stats-grid">
-      <div class="stat-box">Active Nodes: <span id="statNodes">0</span></div>
-      <div class="stat-box">Buffered Bundles: <span id="statBuffered">0</span></div>
-      <div class="stat-box">Total Dispatched: <span id="statDispatched">0</span></div>
-      <div class="stat-box">Total Delivered: <span id="statDelivered">0</span></div>
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="w-64 bg-surface-container-low border-r border-slate-800 flex flex-col justify-between hidden md:flex shrink-0">
+    <div class="p-5 space-y-6">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-container text-2xl">radar</span>
+        <span class="font-bold text-lg text-primary-container tracking-wider">ResQNet</span>
+      </div>
+      <div class="space-y-1">
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Node Operating Mode</p>
+        <div class="bg-surface-container p-2 rounded text-xs text-cyan-400 font-mono border border-cyan-900/50">GATEWAY / RELAY</div>
+      </div>
+      <nav class="space-y-1 text-sm">
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded bg-surface-container text-primary font-medium"><span class="material-symbols-outlined text-lg">grid_view</span> Overview / Bundles</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">hub</span> Topology Map</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">inventory_2</span> Bundle Cache</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">settings</span> Radio Config</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded text-slate-400 hover:bg-surface-container hover:text-slate-200"><span class="material-symbols-outlined text-lg">terminal</span> Terminal Feed</a>
+      </nav>
     </div>
+    <!-- Sidebar Footer Buffer Meter -->
+    <div class="p-4 bg-surface-container/50 border-t border-slate-800 text-xs space-y-1">
+      <div class="flex justify-between text-slate-400"><span>CUSTODY BUFFER</span><span>68.4%</span></div>
+      <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="bg-primary-container h-full w-[684%]"></div></div>
+      <div class="flex justify-between text-[10px] text-slate-500 pt-1"><span>1.36 GB / 2.00 GB</span><span>142 PKTS</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="flex-1 flex flex-col h-full overflow-y-auto">
+    
+    <!-- TOP HEADER -->
+    <header class="h-16 bg-surface-container-low border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
+      <div class="flex items-center gap-3">
+        <span class="font-bold text-lg text-slate-100">ResQNet DTN Command Center</span>
+        <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> STATUS: AD-HOC MESH LINKED - 2.4/5GHZ DUAL DTN
+        </span>
+      </div>
+      <div class="flex items-center gap-6 text-xs font-mono">
+        <span class="text-slate-400">CHANNEL <strong class="text-cyan-400">CH-06 EMERGENCY RELAY</strong></span>
+        <span class="text-slate-400">UPTIME <strong class="text-emerald-400">48:19:04:12</strong></span>
+      </div>
+    </header>
+
+    <!-- DASHBOARD BODY CONTAINER -->
+    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
+      
+      <!-- HERO BANNER -->
+      <section class="bg-surface-container border border-slate-800 p-6 rounded-xl flex items-center justify-between shadow-lg">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+            <span class="bg-primary-container/20 text-primary-container px-2 py-0.5 rounded font-bold">MISSION DIRECTIVE ALPHA-09</span>
+            <span>EID: dtn://incident-alpha.resqnet.int</span>
+          </div>
+          <h1 class="text-2xl font-bold text-slate-100">ResQNet DTN Command Center</h1>
+          <p class="text-xs text-slate-400">Disaster Relief Ad-Hoc Store-and-Forward Network / Telemetry Relay</p>
+        </div>
+        <div class="flex items-center gap-6 font-mono text-xs bg-slate-950 p-4 rounded-lg border border-slate-800">
+          <div><p class="text-slate-500">DTN MESH</p><p class="text-emerald-400 font-bold">Ad-Hoc Direct</p></div>
+          <div><p class="text-slate-500">SIGNAL RSSI</p><p class="text-cyan-400 font-bold">-68 dBm</p></div>
+          <div><p class="text-slate-500">THRESHOLD</p><p class="text-slate-200 font-bold">≤ 4 Hops</p></div>
+          <div><p class="text-slate-500">PROTOCOL</p><p class="text-purple-400 font-bold">BPv7 (RFC 9171)</p></div>
+        </div>
+      </section>
+
+      <!-- 4-COLUMN ANALYTICS GRID -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Active Nodes -->
+        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Active Nodes</span><span class="material-symbols-outlined text-cyan-400">hub</span></div>
+          <div class="my-2"><span id="statNodes" class="text-3xl font-extrabold text-cyan-400 font-mono">0</span></div>
+          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Connected peers</span><span class="text-emerald-400">Online</span></div>
+        </div>
+        <!-- Buffered Bundles -->
+        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Buffered Bundles</span><span class="material-symbols-outlined text-amber-400">inventory_2</span></div>
+          <div class="my-2"><span id="statBuffered" class="text-3xl font-extrabold text-amber-400 font-mono">0</span></div>
+          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Store & Forward Queue</span><span>Pending</span></div>
+        </div>
+        <!-- Total Dispatched -->
+        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Total Dispatched</span><span class="material-symbols-outlined text-indigo-400">send</span></div>
+          <div class="my-2"><span id="statDispatched" class="text-3xl font-extrabold text-indigo-400 font-mono">0</span></div>
+          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Outbound packets</span><span class="text-indigo-400">BPv7</span></div>
+        </div>
+        <!-- Total Delivered -->
+        <div class="bg-surface-container border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-bold uppercase"><span>Total Delivered</span><span class="material-symbols-outlined text-emerald-400">verified</span></div>
+          <div class="my-2"><span id="statDelivered" class="text-3xl font-extrabold text-emerald-400 font-mono">0</span></div>
+          <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2"><span>Custody confirmed</span><span class="text-emerald-400">100%</span></div>
+        </div>
+      </section>
+
+      <!-- 2-COLUMN SECTION: NODE ONBOARDING & DISPATCH FORM -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Node Onboarding -->
+        <div class="bg-surface-container border border-slate-800 p-6 rounded-xl space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+            <span class="material-symbols-outlined text-cyan-400">person_add</span>
+            <h2 class="font-bold text-slate-200">Node Registration & Peer Handshake</h2>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Your Node Name / EID</label>
+              <!-- ID set to nodeName for Python backend -->
+              <input type="text" id="nodeName" value="Node-HQ" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-cyan-400" />
+            </div>
+            <!-- Join Button wired to register() -->
+            <button onclick="register()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-lg transition duration-200 shadow-lg shadow-cyan-500/20 text-sm flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">polyline</span> Join Local Network
+            </button>
+          </div>
+        </div>
+
+        <!-- Emergency Bundle Dispatch -->
+        <div class="bg-surface-container border border-slate-800 p-6 rounded-xl space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+            <span class="material-symbols-outlined text-rose-400">emergency_share</span>
+            <h2 class="font-bold text-slate-200">Emergency Bundle Dispatch</h2>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Destination Node EID</label>
+              <!-- ID set to targetNode -->
+              <input type="text" id="targetNode" value="Node-Medic" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-rose-400" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Priority Level</label>
+              <!-- ID set to priority -->
+              <select id="priority" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-100 focus:outline-none focus:border-rose-400">
+                <option value="Critical">🔴 Critical (P0 - Medical / Life Support)</option>
+                <option value="Urgent">🟠 Urgent (P1 - Supplies / Food)</option>
+                <option value="Routine" selected>🟢 Routine (P2 - Telemetry Sync)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1 uppercase font-mono">Telemetric Payload</label>
+              <!-- ID set to payload -->
+              <textarea id="payload" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-100 focus:outline-none resize-none">URGENT: MEDEVAC RQST @ SECTOR-4. 2 CRITICAL P1 PATIENTS.</textarea>
+            </div>
+            <!-- Dispatch Button wired to sendBundle() -->
+            <button onclick="sendBundle()" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg shadow-rose-600/20 text-sm flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">forward</span> Dispatch DTN Bundle
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TERMINAL FEED LOG -->
+      <section class="bg-surface-container border border-slate-800 p-6 rounded-xl space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-container">terminal</span>
+            <h2 class="font-bold text-slate-200 text-sm">ResQNet Mesh Daemon Terminal Log</h2>
+          </div>
+        </div>
+        <!-- ID set to log -->
+        <div id="log" class="bg-slate-950 border border-slate-800 p-4 h-40 overflow-y-auto font-mono text-xs text-slate-300 rounded-lg space-y-1">
+          <div>> System initialized. Ready to connect to Python backend...</div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
-  <div class="card">
-    <h2>ResQNet Physical Wi-Fi DTN Node</h2>
-    <label>Your Node Name:</label>
-    <input type="text" id="nodeName" value="Node-Phone-1" />
-    <button onclick="register()">Join Local Network</button>
-  </div>
+  <!-- Socket.io Real-Time Bridge Script -->
+<!-- Socket.io Real-Time Bridge Script -->
+<!-- Load Socket.io locally from your Python server -->
+<script src="/socket.io.min.js"></script>
+<script>
+  // Fallback to cdnjs if local static fails
+  if (typeof io === 'undefined') {
+    document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"><\/script>');
+  }
+</script>
 
-  <div class="card">
-    <h3>Dispatch Emergency Bundle</h3>
-    <label>Destination Node Name:</label>
-    <input type="text" id="targetNode" placeholder="e.g. Node-Laptop-HQ" />
-    <label>Priority Level:</label>
-    <select id="priority">
-      <option value="Critical">🔴 Critical (Medical / Life Support)</option>
-      <option value="Urgent">🟠 Urgent (Food / Water Supply)</option>
-      <option value="Routine" selected>🟢 Routine (General Status)</option>
-    </select>
-    <label>Payload Message:</label>
-    <input type="text" id="payload" placeholder="Medical supplies needed at sector 4" />
-    <button onclick="sendBundle()">Send Bundle (Store & Forward)</button>
-  </div>
+<script>
+  // Now io is guaranteed to exist!
+  const socket = io();
 
-  <div class="card">
-    <h3>Live Message Log</h3>
-    <div id="log" class="log"></div>
-  </div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    function logMessage(text) {
-      const box = document.getElementById('log');
+  function logMessage(text) {
+    const box = document.getElementById('log');
+    if (box) {
       box.innerHTML += `<div>> ${text}</div>`;
       box.scrollTop = box.scrollHeight;
     }
+  }
 
-    function register() {
-      const name = document.getElementById('nodeName').value;
-      socket.emit('register-node', name);
-      logMessage(`Registered on local network as: ${name}`);
-    }
+  socket.on('connect', () => {
+    logMessage('Connected to Python backend successfully via WebSockets!');
+  });
 
-    function sendBundle() {
-      const from = document.getElementById('nodeName').value;
-      const to = document.getElementById('targetNode').value;
-      const priority = document.getElementById('priority').value;
-      const payload = document.getElementById('payload').value;
-      
-      socket.emit('send-bundle', { from, to, priority, payload, time: new Date().toLocaleTimeString() });
-      logMessage(`Dispatched [${priority}] bundle to ${to}`);
-    }
+  socket.on('disconnect', () => {
+    logMessage('⚠️ Disconnected from Python backend.');
+  });
 
-    socket.on('receive-bundle', (bundle) => {
-      let badgeClass = 'badge-routine';
-      if (bundle.priority === 'Critical') badgeClass = 'badge-critical';
-      if (bundle.priority === 'Urgent') badgeClass = 'badge-urgent';
+  function register() {
+    const name = document.getElementById('nodeName').value;
+    socket.emit('register-node', name);
+    logMessage(`Registered on local network as: ${name}`);
+  }
 
-      logMessage(`📦 <span class="${badgeClass}">[${bundle.priority}]</span> From ${bundle.from}: "${bundle.payload}"`);
-    });
+  function sendBundle() {
+    const from = document.getElementById('nodeName').value;
+    const to = document.getElementById('targetNode').value;
+    const priority = document.getElementById('priority').value;
+    const payload = document.getElementById('payload').value;
+    
+    socket.emit('send-bundle', { from, to, priority, payload, time: new Date().toLocaleTimeString() });
+    logMessage(`Dispatched [${priority}] bundle to ${to}`);
+  }
 
-    socket.on('buffer-status', (data) => {
-      logMessage(`⚠️ [Store-Carry-Forward Active] Destination offline. Server holding bundle.`);
-    });
+  socket.on('receive-bundle', (bundle) => {
+    let badgeClass = 'text-teal-400 bg-teal-950 border-teal-800';
+    if (bundle.priority === 'Critical') badgeClass = 'text-rose-400 bg-rose-950 border-rose-800';
+    if (bundle.priority === 'Urgent') badgeClass = 'text-amber-400 bg-amber-950 border-amber-800';
 
-    // Listen for analytics stats updates from the server
-    socket.on('update-stats', (stats) => {
+    logMessage(`📦 <span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${badgeClass}">[${bundle.priority}]</span> From ${bundle.from}: "${bundle.payload}"`);
+  });
+
+  socket.on('update-stats', (stats) => {
+    if (document.getElementById('statNodes')) {
       document.getElementById('statNodes').innerText = stats.activeNodes;
       document.getElementById('statBuffered').innerText = stats.bufferedCount;
       document.getElementById('statDispatched').innerText = stats.totalDispatched;
       document.getElementById('statDelivered').innerText = stats.totalDelivered;
-    });
-  </script>
+    }
+  });
+</script>
 </body>
 </html>

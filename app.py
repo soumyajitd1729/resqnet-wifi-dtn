@@ -1,8 +1,12 @@
 from flask import Flask, send_from_directory, request
 from flask_socketio import SocketIO, emit
+import eventlet
 
-app = Flask(__name__, static_folder='public')
-socketio = SocketIO(app, cors_allowed_origins="*")
+# Crucial for stable WebSocket handling on Python/Windows
+eventlet.monkey_patch()
+
+app = Flask(__name__, static_folder='public', static_url_path='')
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 message_buffer = []
 connected_clients = {}  # socket_id: node_name
